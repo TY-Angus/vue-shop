@@ -15,7 +15,7 @@
         <div class="toggle-button" @click="toggleCollapse">|||</div>
         <!-- 侧边栏菜单 -->
         <el-menu
-          default-active="2"
+          :default-active="activePath"
           background-color="#333744"
           text-color="#fff"
           active-text-color="#3d8ee9"
@@ -32,7 +32,12 @@
               <span>{{item.authName}}</span>
             </template>
             <!-- 二级菜单 -->
-            <el-menu-item :index="'/'+subItem.path" v-for="subItem in item.children" :key="subItem.id">
+            <el-menu-item
+              :index="'/'+subItem.path"
+              v-for="subItem in item.children"
+              :key="subItem.id"
+              @click="saveNavState('/'+subItem.path)"
+            >
               <!-- 二级菜单模板区域 -->
               <template slot="title">
                 <i class="el-icon-menu"></i>
@@ -62,7 +67,8 @@ export default {
         '102': 'iconfont icon-danju',
         '145': 'iconfont icon-baobiao'
       },
-      isCollapse: false
+      isCollapse: false,
+      activePath: ''
     }
   },
   methods: {
@@ -80,10 +86,16 @@ export default {
     // 左侧菜单折叠
     toggleCollapse() {
       this.isCollapse = !this.isCollapse
+    },
+    // 保存path
+    saveNavState(activePath) {
+      window.sessionStorage.setItem('activePath', activePath)
+      this.activePath = activePath
     }
   },
   created() {
     this.getMenuList()
+    this.activePath = window.sessionStorage.getItem('activePath')
   }
 }
 </script>
