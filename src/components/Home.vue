@@ -19,9 +19,10 @@
           background-color="#333744"
           text-color="#fff"
           active-text-color="#3d8ee9"
-          :unique-opened="true"
+          unique-opened
           :collapse="isCollapse"
           :collapse-transition="false"
+          router
         >
           <!-- 一级菜单 -->
           <el-submenu :index="item.id+''" v-for="item in menulist" :key="item.id">
@@ -31,7 +32,7 @@
               <span>{{item.authName}}</span>
             </template>
             <!-- 二级菜单 -->
-            <el-menu-item :index="subItem.id+''" v-for="subItem in item.children" :key="subItem.id">
+            <el-menu-item :index="'/'+subItem.path" v-for="subItem in item.children" :key="subItem.id">
               <!-- 二级菜单模板区域 -->
               <template slot="title">
                 <i class="el-icon-menu"></i>
@@ -42,7 +43,9 @@
         </el-menu>
       </el-aside>
       <!-- 右边主体 -->
-      <el-main>Main</el-main>
+      <el-main>
+        <router-view />
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -71,7 +74,7 @@ export default {
     async getMenuList() {
       const { data } = await this.$http.get('menus')
       // 发送请求获取菜单列表
-      if (data.meta.status !== 200) return this.$message.error(data.meta.message)
+      if (data.meta.status !== 200) return this.$message.error(data.meta.msg)
       this.menulist = data.data
     },
     // 左侧菜单折叠
