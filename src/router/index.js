@@ -5,6 +5,7 @@ import Home from '../components/Home.vue'
 
 Vue.use(VueRouter)
 
+// 路由规则
 const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', component: Login },
