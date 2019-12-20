@@ -1,11 +1,12 @@
 <template>
   <div>
-    <!-- 面包屑导航区域 -->
+    <!-- 面包屑导航区域
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>用户管理</el-breadcrumb-item>
       <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-    </el-breadcrumb>
+    </el-breadcrumb>-->
+    <breadcrumb val1="用户管理" val2="用户列表"></breadcrumb>
     <!-- 卡边区域 -->
     <el-card>
       <!-- 用户搜索区域 -->
@@ -29,7 +30,11 @@
         <el-table-column label="角色" prop="role_name"></el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+            <el-switch
+              v-model="scope.row.mg_state"
+              active-color="#13ce66"
+              @change="userStateChange(scope.row)"
+            ></el-switch>
           </template>
         </el-table-column>
         <!-- <el-table-column label="操作" width="180px">
@@ -76,7 +81,7 @@ export default {
       const { data } = await this.$http.get('users', { params: this.queryInfo })
       if (data.meta.status !== 200) return this.$message.error(data.meta.msg)
       this.userList = data.data.users
-      // 总的数据量
+      // total总的数据量
       this.total = data.data.total
     },
     // 监听pagesize改变的事件
@@ -88,6 +93,15 @@ export default {
     handleCurrentChange(newPage) {
       this.queryInfo.pagenum = newPage
       this.getUserList()
+    },
+    // 用户状态修改功能
+    async userStateChange(userInfo) {
+      const { data } = await this.$http.put(`users/${userInfo.id}/state/${userInfo.mg_state}`)
+      if (data.meta.status !== 200) {
+        userInfo.mg_state = !userInfo.mg_state
+        return this.$message.error('用户状态修改失败')
+      }
+      this.$message.success('用户状态修改成功')
     }
   },
   created() {
