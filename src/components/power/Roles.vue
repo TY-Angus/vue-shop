@@ -76,7 +76,12 @@
     </el-card>
 
     <!-- 分配权限的对话框 -->
-    <el-dialog title="分配权限" :visible.sync="setRightDialogVisible" width="30%">
+    <el-dialog
+      title="分配权限"
+      :visible.sync="setRightDialogVisible"
+      width="30%"
+      @close="setRightDialogClosed"
+    >
       <el-tree
         :data="rightsList"
         :props="treeProps"
@@ -84,10 +89,11 @@
         node-key="id"
         :default-expand-all="true"
         :default-checked-keys="defkeys"
+        ref="treeRef"
       ></el-tree>
       <span slot="footer" class="dialog-footer">
         <el-button @click="setRightDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="setRightDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="allotRights()">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -108,7 +114,9 @@ export default {
         children: 'children'
       },
       // 默认选中的节点的数组
-      defkeys: []
+      defkeys: [],
+      // 当前即将分配权限的角色id
+      roleId: ''
     }
   },
   methods: {
@@ -132,9 +140,11 @@ export default {
     },
     // 展开分配权限的对话框
     async showSetRighrDialog(role) {
+      this.roleId = role.id
       const { data } = await this.$http.get('rights/tree')
       if (data.meta.status !== 200) return this.$message.error('获取权限数据失败')
       this.rightsList = data.data
+      // 递归获取当前角色所有的三级节点id
       this.getLeafKeys(role, this.defkeys)
       this.setRightDialogVisible = true
     },
@@ -146,6 +156,22 @@ export default {
       node.children.forEach(item => {
         this.getLeafKeys(item, arr)
       })
+    },
+    // 监听分配权限对话框的关闭
+    setRightDialogClosed() {
+      this.defkeys = []
+    },
+    // 为角色分配权限
+    async allotRights() {
+      const keys = [...this.$refs.treeRef.getCheckedKeys(), ...this.$refs.treeRef.getHalfCheckedKeys()]
+      const idStr = keys.join(',')
+      const { data } = await this.$http.post(`roles/${this.roleId}/rights`, {
+        rids: idStr
+      })
+      if (data.meta.status !== 200) return this.$message.error('分配权限失败')
+      this.$message.success('分配权限成功')
+      this.getRolesList()
+      this.setRightDialogVisible = false
     }
   },
   created() {
