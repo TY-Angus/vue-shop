@@ -23,7 +23,7 @@
             >
               <!-- 渲染一级权限 -->
               <el-col :span="5">
-                <el-tag>{{item1.authName}}</el-tag>
+                <el-tag @close="removeRightById(scope.row,item1.id)" closable>{{item1.authName}}</el-tag>
                 <i class="el-icon-caret-right"></i>
               </el-col>
               <!-- 渲染二级和三级权限 -->
@@ -35,14 +35,20 @@
                   :key="item2.id"
                 >
                   <el-col :span="6">
-                    <el-tag type="success">{{item2.authName}}</el-tag>
+                    <el-tag
+                      @close="removeRightById(scope.row,item2.id)"
+                      closable
+                      type="success"
+                    >{{item2.authName}}</el-tag>
                     <i class="el-icon-caret-right"></i>
                   </el-col>
                   <el-col :span="18">
                     <el-tag
+                      closable
                       type="warning"
                       v-for="(item3,i3) in item2.children"
                       :key="item3.id"
+                      @close="removeRightById(scope.row,item3.id)"
                     >{{item3.authName}}</el-tag>
                   </el-col>
                 </el-row>
@@ -79,6 +85,17 @@ export default {
       const { data } = await this.$http.get('roles')
       if (data.meta.status !== 200) return this.$message.error('获取角色列表失败')
       this.rolesList = data.data
+    },
+    async removeRightById(role, rightsId) {
+      const confirmResult = await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      if (confirmResult !== 'confirm') return this.$message.info('取消了删除')
+      const { data } = await this.$http.delete(`roles/${role.id}/rights/${rightsId}`)
+      if (data.meta.status !== 200) return this.$message.error('删除权限失败')
+      role.children = data.data
     }
   },
   created() {
@@ -97,7 +114,7 @@ export default {
 .bdbottom {
   border-bottom: 1px solid #eee;
 }
-.vcenter{
+.vcenter {
   display: flex;
   align-items: center;
 }
