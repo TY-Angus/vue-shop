@@ -11,9 +11,16 @@ import './assets/fonts/iconfont.css'
 // 导入全局样式表
 import './assets/css/global.css'
 
+// 面包屑导航模块
 import Breadcrumb from './components/Breadcrumb.vue'
 
+// 导入第三方ui插件
+import TreeTable from 'vue-table-with-tree-grid'
+
 Vue.component('breadcrumb', Breadcrumb)
+
+Vue.component('tree-table', TreeTable)
+
 // 把axios挂载在Vue的原型对象上
 Vue.prototype.$http = axios
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
