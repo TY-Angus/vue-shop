@@ -324,7 +324,11 @@ export default {
         if (data.meta.status === 200) {
           this.$message.success('删除用户成功！')
           // 重新渲染
-          this.getUserList()
+          // 判断当前页是否是最后一条数据
+          if (this.userList.length < 2) {
+            this.queryInfo.pagenum--
+            this.getUserList()
+          }
         } else {
           this.$message.error('删除用户失败！')
         }
