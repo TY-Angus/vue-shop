@@ -8,6 +8,7 @@ import Rights from '../components/power/Rights.vue'
 import Roles from '../components/power/Roles.vue'
 import Cate from '../components/goods/Cate.vue'
 import Params from '../components/goods/Params.vue'
+import GoodsList from '../components/goods/List.vue'
 
 Vue.use(VueRouter)
 
@@ -25,7 +26,8 @@ const routes = [
       { path: '/rights', component: Rights },
       { path: '/roles', component: Roles },
       { path: '/categories', component: Cate },
-      { path: '/params', component: Params }
+      { path: '/params', component: Params },
+      { path: '/goods', component: GoodsList }
     ]
   }
 ]
@@ -34,6 +36,7 @@ const router = new VueRouter({
   routes
 })
 
+// 路由守卫
 router.beforeEach((to, from, next) => {
   // to将要访问的路径
   // from代表从哪个路径跳转而来
