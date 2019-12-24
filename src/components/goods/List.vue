@@ -8,8 +8,14 @@
       <!-- 搜索区域 -->
       <el-row :gutter="20">
         <el-col :span="8">
-          <el-input placeholder="请输入内容" class="input-with-select">
-            <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-input
+            placeholder="请输入内容"
+            v-model="queryInfo.query"
+            clearable
+            @clear="getGoodsList"
+            class="input-with-select"
+          >
+            <el-button slot="append" icon="el-icon-search" @click="getGoodsList"></el-button>
           </el-input>
         </el-col>
         <el-col :span="4">
@@ -29,7 +35,12 @@
         <el-table-column label="操作" width="130px">
           <template slot-scope="scope">
             <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
-            <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="removeGoodsById(scope.row.goods_id)"
+            ></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -71,6 +82,21 @@ export default {
     },
     handleCurrentChange(newPageNum) {
       this.queryInfo.pagenum = newPageNum
+      this.getGoodsList()
+    },
+    // 删除商品功能
+    async removeGoodsById(id) {
+      const confirmResult = await this.$confirm('此操作将永久删除该商品, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      if (confirmResult !== 'confirm') return this.$message.info('已取消删除')
+
+      const { data } = await this.$http.delete(`goods/${id}`)
+
+      if (data.meta.status !== 200) return this.$message.error('删除失败了')
+      this.$message.success('删除成功')
       this.getGoodsList()
     }
   },
