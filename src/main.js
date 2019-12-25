@@ -17,9 +17,18 @@ import Breadcrumb from './components/Breadcrumb.vue'
 // 导入第三方ui插件
 import TreeTable from 'vue-table-with-tree-grid'
 
+// 导入第三方副文本编辑器
+import VueQuillEditor from 'vue-quill-editor'
+// require styles 导入副文本编辑器对应的样式
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+
 Vue.component('breadcrumb', Breadcrumb)
 
 Vue.component('tree-table', TreeTable)
+
+Vue.use(VueQuillEditor)
 
 // 把axios挂载在Vue的原型对象上
 Vue.prototype.$http = axios
