@@ -19,14 +19,9 @@ import TreeTable from 'vue-table-with-tree-grid'
 
 // 导入第三方副文本编辑器
 import VueQuillEditor from 'vue-quill-editor'
-// require styles 导入副文本编辑器对应的样式
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
 
 // 导入nprogress包
 import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
 
 Vue.component('breadcrumb', Breadcrumb)
 
