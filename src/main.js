@@ -24,6 +24,10 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
+// 导入nprogress包
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
 Vue.component('breadcrumb', Breadcrumb)
 
 Vue.component('tree-table', TreeTable)
@@ -33,12 +37,22 @@ Vue.use(VueQuillEditor)
 // 把axios挂载在Vue的原型对象上
 Vue.prototype.$http = axios
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
+
 // 添加请求拦截器
+// 在request拦截器中展示进度条
 axios.interceptors.request.use(config => {
   // 挂载token在请求头的Authorization字段上
+  NProgress.start()
   config.headers.Authorization = window.sessionStorage.getItem('token')
   return config
 })
+
+// 在reponse拦截器中隐藏进度条
+axios.interceptors.response.use(config => {
+  NProgress.done()
+  return config
+})
+
 Vue.config.productionTip = false
 
 // 过滤器
